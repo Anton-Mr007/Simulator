@@ -1,0 +1,177 @@
+{
+  "trajectories": [
+    {
+      "id": "look_forward_straight_300m",
+      "description": "Прямое движение вперед с направлением камеры по ходу движения",
+      "estimated_distance_m": 300,
+      "notes": "Самая простая траектория: дрон постоянно летит вперед относительно своей камеры",
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -50.0, "velocity": 3.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 100.0 },
+
+        { "type": "hover", "duration": 4.0 }
+      ]
+    },
+
+    {
+      "id": "look_forward_square_400m",
+      "description": "Квадрат с поворотами камеры по направлению движения",
+      "estimated_distance_m": 400,
+      "notes": "После каждой стороны дрон плавно поворачивает yaw и снова летит вперед",
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -50.0, "velocity": 3.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 33.3 },
+        { "type": "yaw_rate", "yaw_rate": 18.0, "duration": 5.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 33.3 },
+        { "type": "yaw_rate", "yaw_rate": 18.0, "duration": 5.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 33.3 },
+        { "type": "yaw_rate", "yaw_rate": 18.0, "duration": 5.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 33.3 },
+
+        { "type": "hover", "duration": 4.0 }
+      ]
+    },
+
+    {
+      "id": "look_forward_rectangle_500m",
+      "description": "Прямоугольник с направлением камеры по движению",
+      "estimated_distance_m": 500,
+      "notes": "Две длинные стороны и две короткие, повороты выполняются плавно",
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -50.0, "velocity": 3.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 50.0 },
+        { "type": "yaw_rate", "yaw_rate": 18.0, "duration": 5.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 33.3 },
+        { "type": "yaw_rate", "yaw_rate": 18.0, "duration": 5.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 50.0 },
+        { "type": "yaw_rate", "yaw_rate": 18.0, "duration": 5.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 33.3 },
+
+        { "type": "hover", "duration": 4.0 }
+      ]
+    },
+
+    {
+      "id": "look_forward_zigzag_450m",
+      "description": "Плавный зигзаг с движением вперед по направлению взгляда",
+      "estimated_distance_m": 450,
+      "notes": "Дрон чередует небольшие повороты влево и вправо, но каждый раз летит вперед",
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -50.0, "velocity": 3.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 25.0 },
+        { "type": "yaw_rate", "yaw_rate": 15.0, "duration": 3.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 25.0 },
+        { "type": "yaw_rate", "yaw_rate": -15.0, "duration": 6.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 25.0 },
+        { "type": "yaw_rate", "yaw_rate": 15.0, "duration": 6.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 25.0 },
+        { "type": "yaw_rate", "yaw_rate": -15.0, "duration": 6.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 50.0 },
+
+        { "type": "hover", "duration": 4.0 }
+      ]
+    },
+
+    {
+      "id": "look_forward_soft_circle_360m",
+      "description": "Плавное движение по кругу с камерой по касательной направления движения",
+      "estimated_distance_m": 360,
+      "notes": "Круг приближен короткими дугами: небольшой поворот yaw, затем движение вперед",
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -50.0, "velocity": 3.0 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 12.0, "duration": 3.75 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 12.0, "duration": 3.75 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 12.0, "duration": 3.75 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 12.0, "duration": 3.75 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 12.0, "duration": 3.75 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 12.0, "duration": 3.75 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 12.0, "duration": 3.75 },
+
+        { "type": "velocity_body", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+
+        { "type": "hover", "duration": 4.0 }
+      ]
+    },
+
+    {
+      "id": "look_forward_large_circle_720m",
+      "description": "Большой плавный круг с направлением взгляда по движению",
+      "estimated_distance_m": 720,
+      "notes": "Более длинная версия круга, полезна для устойчивого обучения плавным поворотам",
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -55.0, "velocity": 3.0 },
+
+        { "type": "velocity_body", "vx": 4.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 10.0, "duration": 4.5 },
+
+        { "type": "velocity_body", "vx": 4.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 10.0, "duration": 4.5 },
+
+        { "type": "velocity_body", "vx": 4.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 10.0, "duration": 4.5 },
+
+        { "type": "velocity_body", "vx": 4.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 10.0, "duration": 4.5 },
+
+        { "type": "velocity_body", "vx": 4.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 10.0, "duration": 4.5 },
+
+        { "type": "velocity_body", "vx": 4.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 10.0, "duration": 4.5 },
+
+        { "type": "velocity_body", "vx": 4.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 10.0, "duration": 4.5 },
+
+        { "type": "velocity_body", "vx": 4.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 10.0, "duration": 4.5 },
+
+        { "type": "velocity_body", "vx": 4.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 10.0, "duration": 4.5 },
+
+        { "type": "velocity_body", "vx": 4.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 10.0, "duration": 4.5 },
+
+        { "type": "velocity_body", "vx": 4.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+        { "type": "yaw_rate", "yaw_rate": 10.0, "duration": 4.5 },
+
+        { "type": "velocity_body", "vx": 4.0, "vy": 0.0, "vz": 0.0, "duration": 15.0 },
+
+        { "type": "hover", "duration": 4.0 }
+      ]
+    }
+  ]
+}

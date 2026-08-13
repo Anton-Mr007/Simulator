@@ -1,0 +1,263 @@
+# CorrectSimulator — Инструкция по использованию
+
+Генерация синтетических датасетов сенсорных данных мультикоптера в
+симуляторе Microsoft AirSim. Формат данных — EuRoC-совместимый.
+
+Сборка на основе сравнения двух симуляторов (`C:\АО ИТТ\comparison.md`):
+взято лучшее из `AirSimDatasetCreator` и `ModelingSystem-1.1`, устранены
+выявленные недостатки (см. раздел 11).
+
+## Содержание
+
+1. Установка Python и зависимостей
+2. Настройка IP
+3. Настройка симулятора и settings.json
+4. Запуск записи
+5. Система координат
+6. Формат данных
+7. Файлы траекторий
+8. Поддерживаемые команды
+9. Архитектура проекта
+10. Частые ошибки
+11. Что исправлено относительно исходных симуляторов
+
+---
+
+## 1. Установка Python и зависимостей
+
+Требуется **Python 3.10** (требование заказчика — СТРОГО).
+
+```bash
+cd C:\АО ИТТ\CorrectSimulator
+python -m venv .venv310
+.venv310\Scripts\python.exe -m pip install numpy==2.2.6 wheel
+.venv310\Scripts\python.exe -m pip install -r requirements.txt
+.venv310\Scripts\python.exe -m pip install airsim==1.8.1 --no-build-isolation
+```
+
+airsim собирается из исходников и требует numpy/wheel на этапе сборки,
+поэтому они ставятся первыми.
+
+Зависимости (`requirements.txt`):
+- airsim==1.8.1 — клиент AirSim API (устанавливается отдельно, `--no-build-isolation`)
+- numpy==2.2.6, pandas==2.3.3, matplotlib==3.10.9 — работа с данными
+- opencv-python==4.13.0.92, opencv-contrib-python==4.13.0.92 — обработка изображений
+- msgpack-python==0.5.6, msgpack-rpc-python==0.4.1 — сериализация RPC
+- tornado==4.5.3, packaging==26.2 — зависимости AirSim API
+- keyboard==0.13.5 — управление с клавиатуры
+
+## 2. Настройка IP
+
+Файл `src/AirSimDatasetCreator/IP.py`:
+```python
+DESKTOP_IP = "127.0.0.1"
+PORT = 41451
+```
+Симулятор и скрипты на одной машине — локальный адрес. Если симулятор
+запущен на другом компьютере — указать его IP.
+
+## 3. Настройка симулятора и settings.json
+
+1. Скачать и распаковать сборку LandscapeMountains (Microsoft AirSim, UE 4.27),
+   например с https://github.com/microsoft/AirSim/releases.
+2. Скопировать `settings.json` в директорию с `.exe` симулятора:
+   `C:\АО ИТТ\AirSim\LandscapeMountains\WindowsNoEditor\settings.json`
+
+Параметры `settings.json`:
+- Режим: `SimMode: Multirotor`
+- API порт: `ApiServerPort: 41451`
+- Камеры: `cam0`/`cam1` — стереопара, смотрят вперёд (Roll=0), 752×480, FOV 90°
+- IMU: включён, с параметрами шума (`GyroNoiseDensity`, `AccelNoiseDensity` и др.)
+- SpectatorCamera: точка наблюдения (−8, 0, −3), pitch −15°
+
+## 4. Запуск записи
+
+### 4.1 Запуск симулятора
+
+```bash
+cd C:\АО ИТТ\AirSim\LandscapeMountains\WindowsNoEditor
+.\LandscapeMountains.exe
+```
+
+Дождаться полной загрузки карты. Не закрывать окно симулятора во время
+записи — соединение с ним оборвётся.
+
+### 4.2 Автоматический полёт по траектории
+
+```bash
+cd C:\АО ИТТ\CorrectSimulator
+.venv310\Scripts\python.exe test.py
+```
+
+Данные сохраняются в `dataset/mav_{id}/` (для `square_1000m.json` — `dataset/mav_square_1000m/`).
+
+Смена траектории — изменить путь в `test.py` (строка 15):
+```python
+with open('trajectories/straight_1000m.json', 'r', encoding='utf-8') as f:
+```
+
+## 5. Система координат
+
+AirSim работает в **NED**: X=север, Y=восток, Z=вниз.
+
+### 5.1 Команды траекторий — чистый NED
+
+Все координаты и скорости в `trajectories/*.json` задаются **в NED без
+перестановок** и передаются в AirSim как есть (`moveByVelocityAsync(vx, vy, vz)`,
+`moveToPositionAsync(x, y, z)`). Поля JSON однозначны и не требуют
+перекодировки.
+
+Единственное исключение: перед мировой командой `velocity` нос дрона
+доворачивается на курс движения `rotateToYawAsync(atan2(vy, vx))`, чтобы
+камера смотрела вперёд (`TrajectoryExecuter.py:106`). Это устраняет
+проблему «полёта боком» (стартовый yaw ≈50.6° в LandscapeMountains).
+
+### 5.2 Данные датчиков — единая СК F
+
+Выходная СК датасета — **F = (X=север, Y=вверх, Z=восток)** — поворот NED
+на 90° вокруг оси X. Перевод выполняется ТОЛЬКО в `SensorRecorder`, в одном
+месте:
+
+- векторы (позиция, скорость, IMU, GPS): `(x, -z, y)` (`SensorRecorder.py:36`)
+- кватернион: `q_F = q_R ⊗ q_NED`, где `q_R = (1/√2, 1/√2, 0, 0)` —
+  поворот на 90° вокруг X (`SensorRecorder.py:44`). Это математически
+  корректная смена базиса (не перестановка компонент).
+- углы Эйлера считаются **от сырого (NED) кватерниона** AirSim
+  (`SensorRecorder.py:92`) — только они дают физические углы:
+  крен/тангаж относительно горизонта, курс от севера. Довёрнутый
+  `q_F` записывается только в `state_ground_truth0`.
+
+Примечание о зависании: в покое показания `ay ≈ +9.81` — ось Y в СК F
+направлена вверх.
+
+### 5.3 Ground truth
+
+Используется `simGetGroundTruthKinematics()` (`SensorRecorder.py:99`) —
+**истинная кинематика симулятора**, а не оценка полётного контроллера
+(`kinematics_estimated`). Время берётся из `getMultirotorState().timestamp`.
+
+## 6. Формат данных
+
+### Разделитель
+
+Значения разделены **табуляцией** (`\t`).
+
+### Привязка ко времени
+
+Первая колонка во всех файлах — `time_s` (секунды с момента запуска
+записи, единая шкала). Вторая колонка — `timestamp_ns` (внутренний
+таймстамп AirSim в наносекундах).
+
+### Структура датасета
+
+```
+dataset/
+└── mav_{id}/
+    ├── imu.dat                  — time_s\ttimestamp_ns\twx\twy\twz\tax\tay\taz
+    ├── gps.dat                  — time_s\ttimestamp_ns\tlat\tlon\talt\tvx\tvy\tvz
+    ├── angle.dat                — time_s\ttimestamp_ns\troll\tpitch\tyaw
+    ├── state_ground_truth0/
+    │   └── data.dat             — time_s\ttimestamp_ns\tpx\tpy\tpz\tqw\tqx\tqy\tqz\tvx\tvy\tvz
+    ├── cam0/
+    │   ├── data/*.png           — левая стереокамера (вперёд)
+    │   └── data.dat             — time_s\ttimestamp_ns\tfilename
+    └── cam1/
+        ├── data/*.png           — правая стереокамера (вперёд)
+        └── data.dat             — time_s\ttimestamp_ns\tfilename
+```
+
+Данные IMU, СНС и эталонные углы пишутся в плоские файлы `imu.dat`,
+`gps.dat`, `angle.dat` в корне датасета. Все `data.dat` содержат строку
+заголовка `# time_s\ttimestamp_ns\t...`.
+
+Рядом с датасетом сохраняется лог команд:
+`dataset/trajectory_commands_mav_{id}.txt`.
+
+### Частоты записи
+
+| Сенсор | Частота | Поток |
+|--------|---------|-------|
+| IMU | 200 Гц | фоновый цикл `start_recording(hz=200)` |
+| GPS | до 200 Гц | фоновый цикл (обновления координат от симулятора ~10 Гц) |
+| Ground truth | 200 Гц | фоновый цикл |
+| Стереокамеры cam0/cam1 | цель 20 Гц | основной поток `_sleep_with_recording` |
+
+## 7. Файлы траекторий
+
+Папка `trajectories/`:
+
+| Файл | Описание |
+|------|----------|
+| `square_1000m.json` | Квадрат 4×250 м (периметр 1000 м, высота 50 м): взлёт → доворот на 0° → посадка → выставка 180 с → полёт |
+| `straight_1000m.json` | Прямая 1000 м, 3 м/с |
+| `zigzag_1000m.json` | Змейка |
+| `sine_1000m.json` | Синусоида |
+| `circle.json` | Круг |
+| `box.json` | Квадрат 1000×1000 м |
+| `pokoy.json` | Зависание на месте |
+| `easy_commands.json` | Базовые манёвры (прямая, квадрат, зигзаг) |
+| `kalman_20min.json` | Выставка 3 мин + длительный полёт (~20 мин) |
+
+Все команды задаются в NED (см. раздел 5.1).
+
+## 8. Поддерживаемые команды
+
+| Тип | Параметры | Описание |
+|-----|-----------|----------|
+| `takeoff` | timeout_sec | Взлёт |
+| `land` | timeout_sec | Посадка |
+| `hover` | duration | Зависание |
+| `velocity` | vx, vy, vz, duration | Движение со скоростью (мировая СК, NED); нос доворачивается на курс |
+| `velocity_body` | vx, vy, vz, duration | Движение со скоростью (СК дрона) |
+| `velocity_z` | vx, vy, z, duration | Движение на заданной высоте z |
+| `move_to` | x, y, z, velocity | Перемещение в точку (ожидание прибытия < 1 м) |
+| `move` | dx, dy, dz, velocity | Смещение на вектор относительно текущей позиции |
+| `yaw_rate` | yaw_rate, duration | Вращение с угловой скоростью |
+| `yaw_to` | yaw | Поворот на заданный угол |
+| `path` | path, velocity | Полёт по списку точек |
+
+## 9. Архитектура проекта
+
+```
+CorrectSimulator/
+├── test.py                          — запуск записи
+├── settings.json                    — настройки симулятора (копия)
+├── requirements.txt                 — зависимости Python
+├── README.md                        — краткое описание
+├── ИНСТРУКЦИЯ.txt                   — настоящая инструкция
+├── src/AirSimDatasetCreator/
+│   ├── IP.py                        — IP и порт симулятора
+│   ├── AirSimDroneConnector.py      — подключение и базовые команды
+│   ├── DatasetWriterEuRoCLike.py    — запись данных в формате EuRoC
+│   ├── SensorRecorder.py            — чтение сенсоров + конверсия СК
+│   └── TrajectoryExecuter.py        — выполнение команд из JSON
+├── trajectories/                    — JSON-файлы с траекториями
+└── dataset/                         — записанные датасеты
+```
+
+## 10. Частые ошибки
+
+- **Нет соединения с симулятором** — запущен ли `LandscapeMountains.exe`,
+  совпадает ли порт (`41451`) в `IP.py` и `settings.json`.
+- **Пустые изображения камер** — имена камер в `settings.json` должны быть
+  `cam0`/`cam1`; `settings.json` должен лежать рядом с `.exe` симулятора.
+- **Дрон улетает боком** — в старых траекториях не было команды доворота;
+  в этом симуляторе нос выравнивается автоматически перед `velocity`.
+- **gps.dat пуст** — `gps.is_valid` вернёт False, если GPS отключён
+  в `settings.json`; должен быть `"Gps": { "Enabled": true }`.
+- **Привязка времени разъехалась** — все файлы пишутся с единой шкалой
+  `time_s`, но `timestamp_ns` разных сенсоров отличаются; используйте
+  `time_s` для синхронизации.
+
+## 11. Что исправлено относительно исходных симуляторов
+
+Сравнение двух исходных систем — в `C:\АО ИТТ\comparison.md`.
+
+| Проблема | Было | Стало |
+|----------|------|-------|
+| Кватернион при смене СК | перестановка компонент `(w, x, −z, y)` (ModelingSystem) — неверный крен | `q_F = q_R ⊗ q_NED`, `q_R = (1/√2, 1/√2, 0, 0)` |
+| Конверсия координат | размазана по 3 файлам, конфликт полей JSON | только в `SensorRecorder`; команды — чистый NED |
+| Курс дрона | не управлялся (полёт боком) | `rotateToYawAsync(atan2(vy, vx))` перед `velocity` |
+| Ground truth | `kinematics_estimated` (оценка контроллера) | `simGetGroundTruthKinematics()` — истинная GT |
+| Углы Эйлера | отдельная папка `state_groundtruth_euler0` | плоский `angle.dat` в корне; считаются **от сырого (NED) кватерниона** — физические углы (крен/тангаж от горизонта, курс от севера) |
+| Папка GT | `state_groundtruth_estimate0` | `state_ground_truth0` (истинная GT) |

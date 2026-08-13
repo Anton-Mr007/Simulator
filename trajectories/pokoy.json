@@ -1,0 +1,47 @@
+{
+  "trajectories": [
+    {
+      "id": "stationary_hover_10s",
+      "description": "Покой 10 секунд",
+      "estimated_distance_m": 0,
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -50.0, "velocity": 3.0 },
+        { "type": "hover", "duration": 10.0 }
+      ]
+    },
+
+    {
+      "id": "stationary_hover_30s",
+      "description": "Покой 30 секунд",
+      "estimated_distance_m": 0,
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -50.0, "velocity": 3.0 },
+        { "type": "hover", "duration": 30.0 }
+      ]
+    },
+
+    {
+      "id": "stationary_hover_60s",
+      "description": "Покой 60 секунд",
+      "estimated_distance_m": 0,
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -50.0, "velocity": 3.0 },
+        { "type": "hover", "duration": 60.0 }
+      ]
+    },
+
+    {
+      "id": "stationary_hover_120s",
+      "description": "Покой 120 секунд",
+      "estimated_distance_m": 0,
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -50.0, "velocity": 3.0 },
+        { "type": "hover", "duration": 120.0 }
+      ]
+    }
+  ]
+}

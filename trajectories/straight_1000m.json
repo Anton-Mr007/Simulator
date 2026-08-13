@@ -1,0 +1,27 @@
+{
+  "trajectories": [
+    {
+      "id": "straight_1000m",
+      "description": "Полёт по прямой 1000м туда и обратно на высоте 50м",
+      "estimated_distance_m": 2000,
+      "commands": [
+        { "type": "hover", "duration": 180.0 },
+
+        { "type": "takeoff", "timeout_sec": 15 },
+
+        { "type": "velocity", "vx": 0.0, "vy": 0.0, "vz": -1.0, "duration": 100.0 },
+        { "type": "hover", "duration": 3.0 },
+
+        { "type": "velocity", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 333.33 },
+
+        { "type": "hover", "duration": 5.0 },
+
+        { "type": "velocity", "vx": -3.0, "vy": 0.0, "vz": 0.0, "duration": 333.33 },
+
+        { "type": "hover", "duration": 5.0 },
+
+        { "type": "land" }
+      ]
+    }
+  ]
+}

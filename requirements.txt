@@ -1,0 +1,21 @@
+# Требования заказчика (Python 3.10 СТРОГО):
+#   numpy==2.2.6, pandas==2.3.3, python==3.10
+# Примечание: matplotlib==3.11.1 из ТЗ требует Python >=3.11,
+# на Python 3.10 ставится максимально доступная 3.10.9 (см. AirSim.txt).
+#
+# Установка на Python 3.10:
+#   1) python -m pip install numpy==2.2.6 wheel
+#   2) python -m pip install -r requirements.txt
+#   3) python -m pip install airsim==1.8.1 --no-build-isolation
+# (airsim собирается из исходников и требует numpy/wheel на этапе сборки)
+numpy==2.2.6
+pandas==2.3.3
+matplotlib==3.10.9
+airsim==1.8.1
+msgpack-python==0.5.6
+msgpack-rpc-python==0.4.1
+keyboard==0.13.5
+opencv-contrib-python==4.13.0.92
+opencv-python==4.13.0.92
+packaging==26.2
+tornado==4.5.3

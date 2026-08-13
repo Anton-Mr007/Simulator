@@ -1,0 +1,28 @@
+{
+  "trajectories": [
+    {
+      "id": "box_large_4000m_look_forward",
+      "description": "Большая коробочка 1000x1000 метров с движением по направлению взгляда",
+      "estimated_distance_m": 4000,
+      "notes": "Дрон летит вперед относительно камеры. Перед каждой новой стороной выполняется плавный yaw-поворот на 90 градусов. Высота выбрана безопасной для неровной местности.",
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 20 },
+
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -70.0, "velocity": 3.0 },
+
+        { "type": "velocity_body", "vx": 5.0, "vy": 0.0, "vz": 0.0, "duration": 200.0 },
+        { "type": "yaw_rate", "yaw_rate": 15.0, "duration": 6.0 },
+
+        { "type": "velocity_body", "vx": 5.0, "vy": 0.0, "vz": 0.0, "duration": 200.0 },
+        { "type": "yaw_rate", "yaw_rate": 15.0, "duration": 6.0 },
+
+        { "type": "velocity_body", "vx": 5.0, "vy": 0.0, "vz": 0.0, "duration": 200.0 },
+        { "type": "yaw_rate", "yaw_rate": 15.0, "duration": 6.0 },
+
+        { "type": "velocity_body", "vx": 5.0, "vy": 0.0, "vz": 0.0, "duration": 200.0 },
+
+        { "type": "hover", "duration": 5.0 }
+      ]
+    }
+  ]
+}

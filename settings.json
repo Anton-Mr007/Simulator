@@ -1,0 +1,84 @@
+{
+  "SettingsVersion": 1.2,
+  "SimMode": "Multirotor",
+  "ApiServerPort": 41451,
+
+  "SpectatorCamera": {
+    "X": -8.0,
+    "Y": 0.0,
+    "Z": -3.0,
+    "Pitch": -15.0
+  },
+
+  "Vehicles": {
+    "Drone1": {
+      "VehicleType": "SimpleFlight",
+      "AutoCreate": true,
+      
+      "Imu": {
+        "SensorType": 2,
+        "Enabled": true,
+
+        "GyroBiasStabilityTau": 1000,
+        "GyroBiasStability": 0.0001,
+        "GyroNoiseDensity": 0.0003394,
+        "GyroRandomWalk": 3.8785e-05,
+
+        "AccelNoiseDensity": 0.004,
+        "AccelRandomWalk": 0.0002,
+        "AccelBiasStabilityTau": 1000,
+        "AccelBiasStability": 0.0001
+      },
+
+      "Cameras": {
+        "cam0": {
+          "X": 0.35,
+          "Y": -0.1,
+          "Z": -0.05,
+          "Pitch": 0.0,
+          "Roll": 0.0,
+          "Yaw": 0.0,
+
+          "CaptureSettings": [
+            {
+              "ImageType": 0,
+              "Width": 752,
+              "Height": 480,
+              "FOV_Degrees": 90,
+              "MotionBlurAmount": 0,
+              "AutoExposureSpeed": 100,
+              "AutoExposureBias": 0,
+              "AutoExposureMaxBrightness": 1,
+              "AutoExposureMinBrightness": 1
+            }
+          ]
+        },
+
+        "cam1": {
+          "X": 0.35,
+          "Y": 0.1,
+          "Z": -0.05,
+          "Pitch": 0.0,
+          "Roll": 0.0,
+          "Yaw": 0.0,
+
+          "CaptureSettings": [
+            {
+              "ImageType": 0,
+              "Width": 752,
+              "Height": 480,
+              "FOV_Degrees": 90,
+              "MotionBlurAmount": 0,
+              "AutoExposureSpeed": 100,
+              "AutoExposureBias": 0,
+              "AutoExposureMaxBrightness": 1,
+              "AutoExposureMinBrightness": 1
+            }
+          ]
+        },
+
+
+      }
+    }
+  }
+}

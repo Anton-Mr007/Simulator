@@ -1,0 +1,35 @@
+{
+  "trajectories": [
+    {
+      "id": "zigzag_1000m",
+      "description": "Полёт змейкой, 1000м туда и обратно на высоте 50м",
+      "estimated_distance_m": 2300,
+      "commands": [
+        { "type": "hover", "duration": 180.0 },
+
+        { "type": "takeoff", "timeout_sec": 15 },
+
+        { "type": "velocity", "vx": 0.0, "vy": 0.0, "vz": -1.0, "duration": 100.0 },
+        { "type": "hover", "duration": 3.0 },
+
+        { "type": "velocity", "vx": 3.0, "vy": 3.0, "vz": 0.0, "duration": 66.67 },
+        { "type": "velocity", "vx": 3.0, "vy": -3.0, "vz": 0.0, "duration": 66.67 },
+        { "type": "velocity", "vx": 3.0, "vy": 3.0, "vz": 0.0, "duration": 66.67 },
+        { "type": "velocity", "vx": 3.0, "vy": -3.0, "vz": 0.0, "duration": 66.67 },
+        { "type": "velocity", "vx": 3.0, "vy": 3.0, "vz": 0.0, "duration": 66.67 },
+
+        { "type": "hover", "duration": 5.0 },
+
+        { "type": "velocity", "vx": -3.0, "vy": 3.0, "vz": 0.0, "duration": 66.67 },
+        { "type": "velocity", "vx": -3.0, "vy": -3.0, "vz": 0.0, "duration": 66.67 },
+        { "type": "velocity", "vx": -3.0, "vy": 3.0, "vz": 0.0, "duration": 66.67 },
+        { "type": "velocity", "vx": -3.0, "vy": -3.0, "vz": 0.0, "duration": 66.67 },
+        { "type": "velocity", "vx": -3.0, "vy": 3.0, "vz": 0.0, "duration": 66.67 },
+
+        { "type": "hover", "duration": 5.0 },
+
+        { "type": "land" }
+      ]
+    }
+  ]
+}

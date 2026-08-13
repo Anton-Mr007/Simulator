@@ -1,0 +1,61 @@
+{
+  "trajectories": [
+    {
+      "id": "circle_flight",
+      "description": "Круговой полёт на высоте 50м",
+      "estimated_distance_m": 200,
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -50.0, "velocity": 3.0 },
+        { "type": "hover", "duration": 2.0 },
+
+        { "type": "velocity", "vx": 5.0, "vy": 0.0, "vz": 0.0, "duration": 5.0 },
+        { "type": "velocity", "vx": 0.0, "vy": 5.0, "vz": 0.0, "duration": 5.0 },
+        { "type": "velocity", "vx": -5.0, "vy": 0.0, "vz": 0.0, "duration": 5.0 },
+        { "type": "velocity", "vx": 0.0, "vy": -5.0, "vz": 0.0, "duration": 5.0 },
+
+        { "type": "hover", "duration": 2.0 },
+        { "type": "land" }
+      ]
+    },
+
+    {
+      "id": "zigzag_flight",
+      "description": "Зигзаг с поворотами",
+      "estimated_distance_m": 150,
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -30.0, "velocity": 3.0 },
+        { "type": "hover", "duration": 2.0 },
+
+        { "type": "velocity", "vx": 5.0, "vy": 0.0, "vz": 0.0, "duration": 4.0 },
+        { "type": "yaw_rate", "yaw_rate": 1.0, "duration": 1.5 },
+        { "type": "velocity", "vx": 5.0, "vy": 0.0, "vz": 0.0, "duration": 4.0 },
+        { "type": "yaw_rate", "yaw_rate": -1.0, "duration": 1.5 },
+        { "type": "velocity", "vx": 5.0, "vy": 0.0, "vz": 0.0, "duration": 4.0 },
+
+        { "type": "hover", "duration": 2.0 },
+        { "type": "land" }
+      ]
+    },
+
+    {
+      "id": "altitude_change",
+      "description": "Изменение высоты",
+      "estimated_distance_m": 100,
+      "commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "move_to", "x": 0.0, "y": 0.0, "z": -20.0, "velocity": 3.0 },
+        { "type": "hover", "duration": 2.0 },
+
+        { "type": "velocity", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 5.0 },
+        { "type": "move_to", "x": 20.0, "y": 0.0, "z": -50.0, "velocity": 2.0 },
+        { "type": "hover", "duration": 3.0 },
+        { "type": "move_to", "x": 40.0, "y": 0.0, "z": -20.0, "velocity": 2.0 },
+        { "type": "hover", "duration": 3.0 },
+
+        { "type": "land" }
+      ]
+    }
+  ]
+}

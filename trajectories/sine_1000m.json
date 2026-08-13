@@ -1,0 +1,101 @@
+{
+  "trajectories": [
+    {
+      "id": "sine_1000m",
+      "description": "Полёт по синусоиде, амплитуда 100м, 1000м туда и обратно на высоте 50м",
+      "estimated_distance_m": 2300,
+      "commands": [
+        { "type": "hover", "duration": 180.0 },
+
+        { "type": "takeoff", "timeout_sec": 15 },
+
+        { "type": "velocity", "vx": 0.0, "vy": 0.0, "vz": -1.0, "duration": 100.0 },
+        { "type": "hover", "duration": 3.0 },
+
+        { "type": "velocity", "vx": 3.0, "vy": 5.24, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -5.24, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 4.53, "vz": 0.0, "duration": 10.0 },
+
+        { "type": "velocity", "vx": 3.0, "vy": 5.24, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -5.24, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 4.53, "vz": 0.0, "duration": 10.0 },
+
+        { "type": "velocity", "vx": 3.0, "vy": 5.24, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -5.24, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 4.53, "vz": 0.0, "duration": 10.0 },
+
+        { "type": "hover", "duration": 5.0 },
+
+        { "type": "velocity", "vx": -3.0, "vy": -5.24, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": -4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": -2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 0.0, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 5.24, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 0.0, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": -2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": -4.53, "vz": 0.0, "duration": 10.0 },
+
+        { "type": "velocity", "vx": -3.0, "vy": -5.24, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": -4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": -2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 0.0, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 5.24, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 0.0, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": -2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": -4.53, "vz": 0.0, "duration": 10.0 },
+
+        { "type": "velocity", "vx": -3.0, "vy": -5.24, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": -4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": -2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 0.0, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 5.24, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 4.53, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": 0.0, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": -2.62, "vz": 0.0, "duration": 10.0 },
+        { "type": "velocity", "vx": -3.0, "vy": -4.53, "vz": 0.0, "duration": 10.0 },
+
+        { "type": "hover", "duration": 5.0 },
+
+        { "type": "land" }
+      ]
+    }
+  ]
+}
