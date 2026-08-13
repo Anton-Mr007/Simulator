@@ -37,8 +37,9 @@ dataset/mav_{id}/
 ├── gps.dat            # time_s timestamp_ns lat lon alt vx vy vz
 ├── angle.dat          # time_s timestamp_ns roll pitch yaw
 ├── state_ground_truth0/data.dat        # time_s ... px py pz qw qx qy qz vx vy vz
-├── cam0/data.dat, cam0/data/*.png
-└── cam1/data.dat, cam1/data/*.png
+├── cam0/data.dat, cam0/data/*.png    # левая стереокамера (вперёд)
+├── cam1/data.dat, cam1/data/*.png    # правая стереокамера (вперёд)
+└── cam2/data.dat, cam2/data/*.png    # камера вниз
 ```
 
 Все файлы — табулированные `.dat`; первая колонка — `time_s`

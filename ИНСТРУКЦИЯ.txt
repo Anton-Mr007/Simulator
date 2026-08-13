@@ -66,7 +66,8 @@ PORT = 41451
 Параметры `settings.json`:
 - Режим: `SimMode: Multirotor`
 - API порт: `ApiServerPort: 41451`
-- Камеры: `cam0`/`cam1` — стереопара, смотрят вперёд (Roll=0), 752×480, FOV 90°
+- Камеры: `cam0`/`cam1` — стереопара, смотрят вперёд (Roll=0), 752×480, FOV 90°;
+  `cam2` — камера вниз (Pitch=90°), 752×480, FOV 90°
 - IMU: включён, с параметрами шума (`GyroNoiseDensity`, `AccelNoiseDensity` и др.)
 - SpectatorCamera: точка наблюдения (−8, 0, −3), pitch −15°
 
@@ -161,8 +162,11 @@ dataset/
     ├── cam0/
     │   ├── data/*.png           — левая стереокамера (вперёд)
     │   └── data.dat             — time_s\ttimestamp_ns\tfilename
-    └── cam1/
-        ├── data/*.png           — правая стереокамера (вперёд)
+    ├── cam1/
+    │   ├── data/*.png           — правая стереокамера (вперёд)
+    │   └── data.dat             — time_s\ttimestamp_ns\tfilename
+    └── cam2/
+        ├── data/*.png           — камера вниз (Pitch=90°)
         └── data.dat             — time_s\ttimestamp_ns\tfilename
 ```
 
@@ -180,7 +184,7 @@ dataset/
 | IMU | 200 Гц | фоновый цикл `start_recording(hz=200)` |
 | GPS | до 200 Гц | фоновый цикл (обновления координат от симулятора ~10 Гц) |
 | Ground truth | 200 Гц | фоновый цикл |
-| Стереокамеры cam0/cam1 | цель 20 Гц | основной поток `_sleep_with_recording` |
+| Камеры cam0/cam1/cam2 | цель 20 Гц | основной поток `_sleep_with_recording` |
 
 ## 7. Файлы траекторий
 
@@ -240,7 +244,7 @@ CorrectSimulator/
 - **Нет соединения с симулятором** — запущен ли `LandscapeMountains.exe`,
   совпадает ли порт (`41451`) в `IP.py` и `settings.json`.
 - **Пустые изображения камер** — имена камер в `settings.json` должны быть
-  `cam0`/`cam1`; `settings.json` должен лежать рядом с `.exe` симулятора.
+  `cam0`/`cam1`/`cam2`; `settings.json` должен лежать рядом с `.exe` симулятора.
 - **Дрон улетает боком** — в старых траекториях не было команды доворота;
   в этом симуляторе нос выравнивается автоматически перед `velocity`.
 - **gps.dat пуст** — `gps.is_valid` вернёт False, если GPS отключён

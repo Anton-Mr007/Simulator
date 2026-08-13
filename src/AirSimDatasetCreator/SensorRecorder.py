@@ -22,7 +22,8 @@ class SensorRecorder:
     '''
 
     def __init__(self, cam_client, imu_client, gps_client, gt_client,
-                 writer, cam0_name: str = "cam0", cam1_name: str = "cam1"):
+                 writer, cam0_name: str = "cam0", cam1_name: str = "cam1",
+                 cam2_name: str = "cam2"):
         self.writer = writer
         self.cam_client = cam_client
         self.imu_client = imu_client
@@ -31,6 +32,7 @@ class SensorRecorder:
 
         self.cam0_name = cam0_name
         self.cam1_name = cam1_name
+        self.cam2_name = cam2_name
 
         self._thread = None
         self._stop_event = threading.Event()
@@ -94,20 +96,22 @@ class SensorRecorder:
         roll, pitch, yaw = self._quat_to_euler(raw.w_val, raw.x_val, raw.y_val, raw.z_val)
         self.writer.write_gt_euler_row(timestamp_ns, roll, pitch, yaw, self._time_s())
 
-    def record_stereo_images(self):
+    def record_camera_images(self):
         responses = self.cam_client.simGetImages([
             airsim.ImageRequest(self.cam0_name, airsim.ImageType.Scene,
                                 pixels_as_float=False, compress=False),
             airsim.ImageRequest(self.cam1_name, airsim.ImageType.Scene,
                                 pixels_as_float=False, compress=False),
+            airsim.ImageRequest(self.cam2_name, airsim.ImageType.Scene,
+                                pixels_as_float=False, compress=False),
         ])
 
-        if len(responses) != 2:
-            raise RuntimeError(f"Ожидались 2 изображения, получено: {len(responses)}")
+        if len(responses) != 3:
+            raise RuntimeError(f"Ожидались 3 изображения, получено: {len(responses)}")
 
         time_s = self._time_s()
 
-        for camera_name, response in zip(["cam0", "cam1"], responses):
+        for camera_name, response in zip(["cam0", "cam1", "cam2"], responses):
             if response.width == 0 or response.height == 0:
                 raise RuntimeError(
                     f"Камера {camera_name} вернула пустое изображение. "
@@ -144,4 +148,4 @@ class SensorRecorder:
 
     def record_once(self):
         self.record_ground_truth()
-        self.record_stereo_images()
+        self.record_camera_images()

@@ -22,16 +22,18 @@ class EuRoCDatasetWriter:
 
         self.cam0_dir = self.dataset_dir / "cam0" / "data"
         self.cam1_dir = self.dataset_dir / "cam1" / "data"
+        self.cam2_dir = self.dataset_dir / "cam2" / "data"
 
         self.cam0_csv_path = self.cam0_dir.parent / "data.dat"
         self.cam1_csv_path = self.cam1_dir.parent / "data.dat"
+        self.cam2_csv_path = self.cam2_dir.parent / "data.dat"
         self.imu_csv_path = self.dataset_dir / "imu.dat"
         self.gps_csv_path = self.dataset_dir / "gps.dat"
         self.gt_csv_path = self.dataset_dir / "state_ground_truth0" / "data.dat"
         self.angle_csv_path = self.dataset_dir / "angle.dat"
 
     def create_structure(self):
-        for path in (self.cam0_dir, self.cam1_dir, self.gt_csv_path.parent):
+        for path in (self.cam0_dir, self.cam1_dir, self.cam2_dir, self.gt_csv_path.parent):
             path.mkdir(parents=True, exist_ok=True)
 
     def init_csv_files(self):
@@ -41,14 +43,17 @@ class EuRoCDatasetWriter:
         self.angle_csv_path.write_text("# time_s\ttimestamp_ns\troll\tpitch\tyaw\n")
         self.cam0_csv_path.write_text("# time_s\ttimestamp_ns\tfilename\n")
         self.cam1_csv_path.write_text("# time_s\ttimestamp_ns\tfilename\n")
+        self.cam2_csv_path.write_text("# time_s\ttimestamp_ns\tfilename\n")
 
     def write_camera_image(self, camera_name: str, timestamp_ns: int, image_rgb: np.ndarray, time_s: float):
         if camera_name == "cam0":
             image_dir, csv_path = self.cam0_dir, self.cam0_csv_path
         elif camera_name == "cam1":
             image_dir, csv_path = self.cam1_dir, self.cam1_csv_path
+        elif camera_name == "cam2":
+            image_dir, csv_path = self.cam2_dir, self.cam2_csv_path
         else:
-            raise ValueError(f"Неизвестная камера: {camera_name}. Используй 'cam0' или 'cam1'.")
+            raise ValueError(f"Неизвестная камера: {camera_name}. Используй 'cam0', 'cam1' или 'cam2'.")
 
         filename = f"{timestamp_ns}.png"
         image_path = image_dir / filename
