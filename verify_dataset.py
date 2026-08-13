@@ -65,10 +65,10 @@ def main():
     mask_move = speed > 1.0
     n_move = int(mask_move.sum())
     if n_move > 0:
-        hdg = np.degrees(np.arctan2(east, north))[mask_move]
-        yaw = np.degrees(ang[:, 4])
-        n = min(len(hdg), len(yaw))
-        diff = np.abs(((hdg[:n] - yaw[:n] + 180) % 360) - 180)
+        n = min(len(gps), len(ang))
+        hdg = np.degrees(np.arctan2(east[:n], north[:n]))[mask_move[:n]]
+        yaw = np.degrees(ang[:n, 4])[mask_move[:n]]
+        diff = np.abs(((hdg - yaw + 180) % 360) - 180)
         print(f"  движение (|V|>1 м/с): {n_move} отсчётов GPS")
         print(f"    |yaw - курс| среднее: {diff.mean():.1f}° (ожидается < 10°)")
         print(f"    |yaw - курс| 90-й перцентиль: {np.percentile(diff, 90):.1f}°")

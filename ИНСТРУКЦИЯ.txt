@@ -133,9 +133,10 @@ AirSim работает в **NED**: X=север, Y=восток, Z=вниз.
 
 ### 5.3 Ground truth
 
-Используется `simGetGroundTruthKinematics()` (`SensorRecorder.py:99`) —
-**истинная кинематика симулятора**, а не оценка полётного контроллера
-(`kinematics_estimated`). Время берётся из `getMultirotorState().timestamp`.
+Используется `kinematics_ground_truth` из `getMultirotorState()`
+(`SensorRecorder.py:84`) — **истинная кинематика симулятора**, а не оценка
+полётного контроллера (`kinematics_estimated`). Время — тот же `timestamp`
+из одного вызова.
 
 ## 6. Формат данных
 
@@ -181,9 +182,9 @@ dataset/
 
 | Сенсор | Частота | Поток |
 |--------|---------|-------|
-| IMU | 200 Гц | фоновый цикл `start_recording(hz=200)` |
-| GPS | до 200 Гц | фоновый цикл (обновления координат от симулятора ~10 Гц) |
-| Ground truth | 200 Гц | фоновый цикл |
+| IMU | 200 Гц | отдельный поток `start_recording(hz=200)` |
+| GPS | 10 Гц | отдельный поток `start_recording(gps_hz=10)` (обновления от симулятора ~10 Гц) |
+| Ground truth | 200 Гц | отдельный поток (1 RPC `getMultirotorState`) |
 | Камеры cam0/cam1/cam2 | цель 20 Гц | основной поток `_sleep_with_recording` |
 
 ## 7. Файлы траекторий
@@ -262,6 +263,6 @@ CorrectSimulator/
 | Кватернион при смене СК | перестановка компонент `(w, x, −z, y)` (ModelingSystem) — неверный крен | `q_F = q_R ⊗ q_NED`, `q_R = (1/√2, 1/√2, 0, 0)` |
 | Конверсия координат | размазана по 3 файлам, конфликт полей JSON | только в `SensorRecorder`; команды — чистый NED |
 | Курс дрона | не управлялся (полёт боком) | `rotateToYawAsync(atan2(vy, vx))` перед `velocity` |
-| Ground truth | `kinematics_estimated` (оценка контроллера) | `simGetGroundTruthKinematics()` — истинная GT |
+| Ground truth | `kinematics_estimated` (оценка контроллера) | `kinematics_ground_truth` из `getMultirotorState()` — истинная GT |
 | Углы Эйлера | отдельная папка `state_groundtruth_euler0` | плоский `angle.dat` в корне; считаются **от сырого (NED) кватерниона** — физические углы (крен/тангаж от горизонта, курс от севера) |
 | Папка GT | `state_groundtruth_estimate0` | `state_ground_truth0` (истинная GT) |

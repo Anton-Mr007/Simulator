@@ -46,7 +46,7 @@ class TrajectoryExecutor:
         while time.perf_counter() - start < duration:
             now = time.perf_counter()
             if self.recorder is not None and now >= next_cam:
-                self.recorder.record_stereo_images()
+                self.recorder.record_camera_images()
                 next_cam += cam_dt
             time.sleep(0.005)
 

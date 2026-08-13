@@ -34,7 +34,7 @@ class SensorRecorder:
         self.cam1_name = cam1_name
         self.cam2_name = cam2_name
 
-        self._thread = None
+        self._threads = []
         self._stop_event = threading.Event()
 
         self.t0 = None
@@ -81,8 +81,9 @@ class SensorRecorder:
         )
 
     def record_ground_truth(self):
-        kin = self.gt_client.simGetGroundTruthKinematics()
-        timestamp_ns = self.gt_client.getMultirotorState().timestamp
+        state = self.gt_client.getMultirotorState()
+        timestamp_ns = state.timestamp
+        kin = state.kinematics_ground_truth
 
         px, py, pz = self._to_drone_frame(kin.position)
         vx, vy, vz = self._to_drone_frame(kin.linear_velocity)
@@ -122,29 +123,39 @@ class SensorRecorder:
             image_rgb = image_1d.reshape(response.height, response.width, 3)
             self.writer.write_camera_image(camera_name, timestamp_ns, image_rgb, time_s)
 
-    def start_recording(self, hz=200):
+    def start_recording(self, hz=200, gps_hz=10):
+        import ctypes
+        import sys
+        sys.setswitchinterval(0.0005)
+        ctypes.windll.winmm.timeBeginPeriod(1)
         self.t0 = time.time()
         self._stop_event.clear()
 
-        def loop():
-            dt = 1 / hz
+        def loop(fn, rate):
+            dt = 1 / rate
             next_time = time.perf_counter()
             while not self._stop_event.is_set():
                 now = time.perf_counter()
                 if now >= next_time:
-                    self.record_imu()
-                    self.record_gps()
-                    self.record_ground_truth()
+                    fn()
                     next_time += dt
                 time.sleep(0.0005)
 
-        self._thread = threading.Thread(target=loop)
-        self._thread.start()
+        self._threads = [
+            threading.Thread(target=loop, args=(self.record_imu, hz)),
+            threading.Thread(target=loop, args=(self.record_gps, gps_hz)),
+            threading.Thread(target=loop, args=(self.record_ground_truth, hz)),
+        ]
+        for t in self._threads:
+            t.start()
 
     def stop_recording(self):
         self._stop_event.set()
-        if self._thread is not None:
-            self._thread.join()
+        for t in getattr(self, "_threads", []):
+            t.join()
+        import ctypes
+        ctypes.windll.winmm.timeEndPeriod(1)
+        self.writer.flush()
 
     def record_once(self):
         self.record_ground_truth()
