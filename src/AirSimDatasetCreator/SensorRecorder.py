@@ -22,7 +22,8 @@ class SensorRecorder:
     '''
 
     def __init__(self, cam_client, imu_client, gps_client, gt_client,
-                 writer, cam0_name: str = "cam0", cam1_name: str = "cam1"):
+                 writer, cam0_name: str = "cam0", cam1_name: str = "cam1",
+                 cam2_name: str = "cam2"):
         self.writer = writer
         self.cam_client = cam_client
         self.imu_client = imu_client
@@ -31,11 +32,13 @@ class SensorRecorder:
 
         self.cam0_name = cam0_name
         self.cam1_name = cam1_name
+        self.cam2_name = cam2_name
 
-        self._thread = None
+        self._threads = []
         self._stop_event = threading.Event()
 
         self.t0 = None
+        self._last_imu_ns = None
 
     @staticmethod
     def _to_drone_frame(v):
@@ -60,6 +63,7 @@ class SensorRecorder:
     def record_imu(self):
         imu = self.imu_client.getImuData()
         timestamp_ns = imu.time_stamp
+        self._last_imu_ns = timestamp_ns
         wx, wy, wz = self._to_drone_frame(imu.angular_velocity)
         ax, ay, az = self._to_drone_frame(imu.linear_acceleration)
         self.writer.write_imu_row(timestamp_ns, wx, wy, wz, ax, ay, az, self._time_s())
@@ -80,7 +84,9 @@ class SensorRecorder:
 
     def record_ground_truth(self):
         kin = self.gt_client.simGetGroundTruthKinematics()
-        timestamp_ns = self.gt_client.getMultirotorState().timestamp
+        timestamp_ns = self._last_imu_ns
+        if timestamp_ns is None:
+            timestamp_ns = self.gt_client.getMultirotorState().timestamp
 
         px, py, pz = self._to_drone_frame(kin.position)
         vx, vy, vz = self._to_drone_frame(kin.linear_velocity)
@@ -94,20 +100,22 @@ class SensorRecorder:
         roll, pitch, yaw = self._quat_to_euler(raw.w_val, raw.x_val, raw.y_val, raw.z_val)
         self.writer.write_gt_euler_row(timestamp_ns, roll, pitch, yaw, self._time_s())
 
-    def record_stereo_images(self):
+    def record_camera_images(self):
         responses = self.cam_client.simGetImages([
             airsim.ImageRequest(self.cam0_name, airsim.ImageType.Scene,
                                 pixels_as_float=False, compress=False),
             airsim.ImageRequest(self.cam1_name, airsim.ImageType.Scene,
                                 pixels_as_float=False, compress=False),
+            airsim.ImageRequest(self.cam2_name, airsim.ImageType.Scene,
+                                pixels_as_float=False, compress=False),
         ])
 
-        if len(responses) != 2:
-            raise RuntimeError(f"Ожидались 2 изображения, получено: {len(responses)}")
+        if len(responses) != 3:
+            raise RuntimeError(f"Ожидались 3 изображения, получено: {len(responses)}")
 
         time_s = self._time_s()
 
-        for camera_name, response in zip(["cam0", "cam1"], responses):
+        for camera_name, response in zip(["cam0", "cam1", "cam2"], responses):
             if response.width == 0 or response.height == 0:
                 raise RuntimeError(
                     f"Камера {camera_name} вернула пустое изображение. "
@@ -118,30 +126,43 @@ class SensorRecorder:
             image_rgb = image_1d.reshape(response.height, response.width, 3)
             self.writer.write_camera_image(camera_name, timestamp_ns, image_rgb, time_s)
 
-    def start_recording(self, hz=200):
+    def start_recording(self, hz=200, gps_hz=10, gt_hz=200):
+        import ctypes
+        import sys
+        sys.setswitchinterval(0.0005)
+        ctypes.windll.winmm.timeBeginPeriod(1)
         self.t0 = time.time()
         self._stop_event.clear()
 
-        def loop():
-            dt = 1 / hz
+        def loop(fn, rate):
+            dt = 1 / rate
             next_time = time.perf_counter()
             while not self._stop_event.is_set():
                 now = time.perf_counter()
                 if now >= next_time:
-                    self.record_imu()
-                    self.record_gps()
-                    self.record_ground_truth()
+                    try:
+                        fn()
+                    except Exception:
+                        pass
                     next_time += dt
                 time.sleep(0.0005)
 
-        self._thread = threading.Thread(target=loop)
-        self._thread.start()
+        self._threads = [
+            threading.Thread(target=loop, args=(self.record_imu, hz)),
+            threading.Thread(target=loop, args=(self.record_gps, gps_hz)),
+            threading.Thread(target=loop, args=(self.record_ground_truth, gt_hz)),
+        ]
+        for t in self._threads:
+            t.start()
 
     def stop_recording(self):
         self._stop_event.set()
-        if self._thread is not None:
-            self._thread.join()
+        for t in getattr(self, "_threads", []):
+            t.join()
+        import ctypes
+        ctypes.windll.winmm.timeEndPeriod(1)
+        self.writer.flush()
 
     def record_once(self):
         self.record_ground_truth()
-        self.record_stereo_images()
+        self.record_camera_images()

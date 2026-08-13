@@ -40,7 +40,7 @@ for _dct in dct['trajectories']:
 
     recorder = SensorRecorder(
         cam_client, imu_client=imu_client, gps_client=gps_client, gt_client=gt_client,
-        writer=writer, cam0_name='cam0', cam1_name='cam1',
+        writer=writer, cam0_name='cam0', cam1_name='cam1', cam2_name='cam2',
     )
     executer = TrajectoryExecutor(drone=drone, recorder=recorder)
 
