@@ -67,7 +67,7 @@ PORT = 41451
 - Режим: `SimMode: Multirotor`
 - API порт: `ApiServerPort: 41451`
 - Камеры: `cam0`/`cam1` — стереопара, смотрят вперёд (Roll=0), 752×480, FOV 90°;
-  `cam2` — камера вниз (Pitch=90°), 752×480, FOV 90°
+  `cam2` — камера вниз (Pitch=-90°), 752×480, FOV 90°
 - IMU: включён, с параметрами шума (`GyroNoiseDensity`, `AccelNoiseDensity` и др.)
 - SpectatorCamera: точка наблюдения (−8, 0, −3), pitch −15°
 
