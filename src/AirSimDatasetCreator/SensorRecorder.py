@@ -128,7 +128,7 @@ class SensorRecorder:
             image_rgb = image_1d.reshape(response.height, response.width, 3)
             self.writer.write_camera_image(camera_name, timestamp_ns, image_rgb, time_s)
 
-    def start_recording(self, hz=200, gps_hz=10, gt_hz=200):
+    def start_recording(self, hz=200, gps_hz=200, gt_hz=200):
         import ctypes
         import sys
         sys.setswitchinterval(0.0005)

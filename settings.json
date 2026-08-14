@@ -30,6 +30,13 @@
         "AccelBiasStability": 0.0001
       },
 
+      "Gps": {
+        "SensorType": 3,
+        "Enabled": true,
+        "UpdateFrequency": 200,
+        "UpdateLatency": 0.2
+      },
+
       "Cameras": {
         "cam0": {
           "X": 0.35,
