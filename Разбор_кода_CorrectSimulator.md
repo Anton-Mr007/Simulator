@@ -54,7 +54,7 @@
 **Преобразования** (43–58):
 - `_to_drone_frame(v)` → `(v.x, -v.z, v.y)`;
 - `_quat_to_drone_frame(q)` → `s*(w-x), s*(x+w), s*(y-z), s*(z+y)`, `s=1/√2` — доворот на 90° вокруг X;
-- `_quat_to_euler(w,x,y,z)` → стандартные формулы roll/pitch/yaw от **сырого** кватерниона.
+- `_quat_to_euler(w,x,y,z)` → стандартные формулы roll/pitch/yaw от **сырого** кватерниона; знак yaw инвертирован (`yaw = -yaw_cw`) — курс записывается **против часовой стрелки** (0°=север, +90°=запад).
 
 **Запись потоков:**
 - `record_imu` (63–69): `getImuData()`, метка `imu.time_stamp` сохраняется в `_last_imu_ns`, векторы через `_to_drone_frame`, строка + `time_s`.
@@ -82,8 +82,8 @@
 - `velocity_body` — `moveByVelocityBodyFrameAsync(vx, vy, vz, dur)` + запись камер;
 - `velocity_z` — `moveByVelocityZAsync(vx, vy, z, dur)` + запись камер (новая команда);
 - `move_to` / `move` — `moveToPositionAsync(x, y, z, v)` + **опрос расстояния** до цели с дедлайном 60 с и порогом 1 м (127–131, 144–148);
-- `yaw_rate` — `rotateByYawRateAsync` + запись камер;
-- `yaw_to` — `rotateToYawAsync` + пауза 3 с;
+- `yaw_rate` — `rotateByYawRateAsync(-yaw_rate)` + запись камер (положительный `yaw_rate` = против часовой стрелки);
+- `yaw_to` — `rotateToYawAsync(-yaw)` + пауза 3 с (положительный `yaw` = против часовой стрелки);
 - `path` — `moveOnPathAsync(path, v)` + оценка времени полёта по длине пути и запись камер.
 
 **`_sleep_with_recording`** (41–51): цикл на время `duration`, каждые `1/CAMERA_HZ` вызывает `recorder.record_camera_images()`. Именно здесь пишутся кадры во время манёвра.
