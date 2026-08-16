@@ -13,12 +13,9 @@ class TrajectoryExecutor:
     Выполняет список команд движения из JSON.
 
     Все координаты и скорости в командах — в мировой системе NED
-    (X=север, Y=восток, Z=вниз), без перестановок. Курс считается
-    против часовой стрелки (0=север, +90=запад), поэтому положительные
-    yaw_rate/yaw_to в командах означают поворот против часовой стрелки;
-    перед вызовом AirSim (конвенция "по часовой") знак инвертируется.
-    Перед командой "velocity" нос дрона доворачивается на физический
-    курс движения, чтобы камера смотрела вперёд.
+    (X=север, Y=восток, Z=вниз), без перестановок. Перед командой
+    "velocity" нос дрона доворачивается на курс движения, чтобы
+    камера смотрела вперёд.
     '''
 
     CAMERA_HZ = 20
@@ -153,7 +150,7 @@ class TrajectoryExecutor:
             elif command_type == 'yaw_rate':
                 self.log_of_command.append(f'Вращение {command["yaw_rate"]} deg/s')
                 try:
-                    self.client.rotateByYawRateAsync(-command["yaw_rate"], command["duration"])
+                    self.client.rotateByYawRateAsync(command["yaw_rate"], command["duration"])
                 except Exception:
                     pass
                 self._sleep_with_recording(command["duration"])
@@ -161,7 +158,7 @@ class TrajectoryExecutor:
             elif command_type == 'yaw_to':
                 self.log_of_command.append(f'Поворот на {command["yaw"]} deg')
                 try:
-                    self.client.rotateToYawAsync(-command["yaw"])
+                    self.client.rotateToYawAsync(command["yaw"])
                 except Exception:
                     pass
                 time.sleep(3.0)

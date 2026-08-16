@@ -17,15 +17,15 @@
         { "type": "hover", "duration": 3.0 },
 
         { "type": "velocity", "vx": 3.0, "vy": 0.0, "vz": 0.0, "duration": 83.33 },
-        { "type": "yaw_rate", "yaw_rate": -45.0, "duration": 2.0 },
+        { "type": "yaw_rate", "yaw_rate": 45.0, "duration": 2.0 },
         { "type": "hover", "duration": 2.0 },
 
         { "type": "velocity", "vx": 0.0, "vy": 3.0, "vz": 0.0, "duration": 83.33 },
-        { "type": "yaw_rate", "yaw_rate": -45.0, "duration": 2.0 },
+        { "type": "yaw_rate", "yaw_rate": 45.0, "duration": 2.0 },
         { "type": "hover", "duration": 2.0 },
 
         { "type": "velocity", "vx": -3.0, "vy": 0.0, "vz": 0.0, "duration": 83.33 },
-        { "type": "yaw_rate", "yaw_rate": -45.0, "duration": 2.0 },
+        { "type": "yaw_rate", "yaw_rate": 45.0, "duration": 2.0 },
         { "type": "hover", "duration": 2.0 },
 
         { "type": "velocity", "vx": 0.0, "vy": -3.0, "vz": 0.0, "duration": 83.33 },

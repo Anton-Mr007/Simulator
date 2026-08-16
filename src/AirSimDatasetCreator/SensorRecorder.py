@@ -15,8 +15,7 @@ class SensorRecorder:
       - кватернион:   q_F = q_R (x) q,  q_R = (1/sqrt2, 1/sqrt2, 0, 0)
     Углы Эйлера считаются от сырого (NED) кватерниона AirSim — только
     они дают физические углы (крен/тангаж относительно горизонта,
-    курс от севера против часовой стрелки: 0=север, +90=запад).
-    Довёрнутый q_F записывается только в ground truth.
+    курс от севера). Довёрнутый q_F записывается только в ground truth.
 
     Ground truth берётся из simGetGroundTruthKinematics() — истинная
     кинематика симулятора (не оценка полётного контроллера).
@@ -55,8 +54,7 @@ class SensorRecorder:
     def _quat_to_euler(w, x, y, z):
         roll = np.arctan2(2 * (w * x + y * z), 1 - 2 * (x * x + y * y))
         pitch = np.arcsin(np.clip(2 * (w * y - z * x), -1.0, 1.0))
-        yaw_cw = np.arctan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z))
-        yaw = -yaw_cw
+        yaw = np.arctan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z))
         return roll, pitch, yaw
 
     def _time_s(self):
