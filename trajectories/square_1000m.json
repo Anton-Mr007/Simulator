@@ -4,14 +4,16 @@
       "id": "square_1000m",
       "description": "Полёт по квадрату (периметр 1000м: 4x250м) на высоте 50м",
       "estimated_distance_m": 1000,
+      "setup_commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "yaw_to", "yaw": 0.0 },
+        { "type": "land" },
+        { "type": "wait", "duration": 10.0 }
+      ],
       "commands": [
         { "type": "hover", "duration": 180.0 },
 
         { "type": "takeoff", "timeout_sec": 15 },
-
-        { "type": "yaw_to", "yaw": 0.0 },
-
-        { "type": "land" },
 
         { "type": "velocity", "vx": 0.0, "vy": 0.0, "vz": -1.0, "duration": 100.0 },
         { "type": "hover", "duration": 3.0 },

@@ -16,6 +16,7 @@ with open('trajectories/square_1000m.json', 'r', encoding='utf-8') as f:
 
 for _dct in dct['trajectories']:
     print(f"Выполняется симуляция {_dct['description']}")
+    setup_commands = _dct.get('setup_commands', [])
     commands = _dct['commands']
 
     drone = AirSimDroneConnector(ip=DESKTOP_IP, port=PORT)
@@ -45,6 +46,11 @@ for _dct in dct['trajectories']:
     executer = TrajectoryExecutor(drone=drone, recorder=recorder)
 
     try:
+        if setup_commands:
+            print('--- Калибровка (без записи) ---')
+            executer.execute(setup_commands)
+            print('--- Калибровка завершена ---')
+
         recorder.start_recording(hz=200)
 
         start_pos = drone.client.getMultirotorState().kinematics_estimated.position

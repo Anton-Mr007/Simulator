@@ -18,6 +18,7 @@
       "Imu": {
         "SensorType": 2,
         "Enabled": true,
+        "UpdateFrequency": 200,
 
         "GyroBiasStabilityTau": 1000,
         "GyroBiasStability": 0.0001,

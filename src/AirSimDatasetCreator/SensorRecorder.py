@@ -39,6 +39,7 @@ class SensorRecorder:
 
         self.t0 = None
         self._last_imu_ns = None
+        self._gt_call_count = 0
 
     @staticmethod
     def _to_drone_frame(v):
@@ -68,20 +69,6 @@ class SensorRecorder:
         ax, ay, az = self._to_drone_frame(imu.linear_acceleration)
         self.writer.write_imu_row(timestamp_ns, wx, wy, wz, ax, ay, az, self._time_s())
 
-    def record_gps(self):
-        gps = self.gps_client.getGpsData()
-        if not gps.is_valid:
-            return
-        timestamp_ns = gps.time_stamp
-        geo = gps.gnss.geo_point
-        vx, vy, vz = self._to_drone_frame(gps.gnss.velocity)
-        self.writer.write_gps_row(
-            timestamp_ns,
-            geo.latitude, geo.longitude, geo.altitude,
-            vx, vy, vz,
-            self._time_s(),
-        )
-
     def record_ground_truth(self):
         kin = self.gt_client.simGetGroundTruthKinematics()
         timestamp_ns = self._last_imu_ns
@@ -91,14 +78,15 @@ class SensorRecorder:
         px, py, pz = self._to_drone_frame(kin.position)
         vx, vy, vz = self._to_drone_frame(kin.linear_velocity)
         qw, qx, qy, qz = self._quat_to_drone_frame(kin.orientation)
-
         self.writer.write_gt_row(
             timestamp_ns, px, py, pz, qw, qx, qy, qz, vx, vy, vz, self._time_s(),
         )
 
         raw = kin.orientation
         roll, pitch, yaw = self._quat_to_euler(raw.w_val, raw.x_val, raw.y_val, raw.z_val)
-        self.writer.write_gt_euler_row(timestamp_ns, roll, pitch, yaw, self._time_s())
+        self._gt_call_count += 1
+        if self._gt_call_count % 20 == 0:
+            self.writer.write_gt_euler_row(timestamp_ns, roll, pitch, yaw, self._time_s())
 
     def record_camera_images(self):
         responses = self.cam_client.simGetImages([
@@ -126,7 +114,21 @@ class SensorRecorder:
             image_rgb = image_1d.reshape(response.height, response.width, 3)
             self.writer.write_camera_image(camera_name, timestamp_ns, image_rgb, time_s)
 
-    def start_recording(self, hz=200, gps_hz=200, gt_hz=200):
+    def record_gps(self):
+        gps = self.gps_client.getGpsData()
+        if not gps.is_valid:
+            return
+        timestamp_ns = gps.time_stamp
+        geo = gps.gnss.geo_point
+        vx, vy, vz = self._to_drone_frame(gps.gnss.velocity)
+        self.writer.write_gps_row(
+            timestamp_ns,
+            geo.latitude, geo.longitude, geo.altitude,
+            vx, vy, vz,
+            self._time_s(),
+        )
+
+    def start_recording(self, hz=200, gps_hz=10, gt_hz=200):
         import ctypes
         import sys
         sys.setswitchinterval(0.0005)
@@ -164,5 +166,6 @@ class SensorRecorder:
         self.writer.flush()
 
     def record_once(self):
+        self.record_imu()
         self.record_ground_truth()
-        self.record_camera_images()
+        # self.record_camera_images()
