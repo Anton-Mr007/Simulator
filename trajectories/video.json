@@ -1,0 +1,45 @@
+{
+  "trajectories": [
+    {
+      "id": "video",
+      "description": "Видео: разворот, взлёт 30м, зиг-заг ~200м, покачивание",
+      "estimated_distance_m": 200,
+      "setup_commands": [
+        { "type": "takeoff", "timeout_sec": 15 },
+        { "type": "yaw_to", "yaw": 0.0 },
+        { "type": "land" },
+        { "type": "wait", "duration": 10.0 }
+      ],
+      "commands": [
+        { "type": "wait", "duration": 3.0 },
+
+        { "type": "takeoff", "timeout_sec": 15 },
+
+        { "type": "velocity", "vx": 0.0, "vy": 0.0, "vz": -1.0, "duration": 30.0 },
+        { "type": "hover", "duration": 3.0 },
+
+        { "type": "velocity", "vx": 3.0, "vy": 2.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -2.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 2.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -2.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 2.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": -2.0, "duration": 10.0 },
+        { "type": "velocity", "vx": 3.0, "vy": 0.0, "duration": 7.0 },
+
+        { "type": "hover", "duration": 3.0 },
+
+        { "type": "velocity", "vx": 0.0, "vy": 1.0, "duration": 2.0 },
+        { "type": "velocity", "vx": 0.0, "vy": -1.0, "duration": 2.0 },
+        { "type": "velocity", "vx": 1.0, "vy": 0.0, "duration": 2.0 },
+        { "type": "velocity", "vx": -1.0, "vy": 0.0, "duration": 2.0 },
+        { "type": "velocity", "vx": 0.7, "vy": 0.7, "duration": 3.0 },
+        { "type": "velocity", "vx": -0.7, "vy": -0.7, "duration": 3.0 },
+        { "type": "velocity", "vx": 0.7, "vy": -0.7, "duration": 3.0 },
+        { "type": "velocity", "vx": -0.7, "vy": 0.7, "duration": 3.0 },
+
+        { "type": "hover", "duration": 2.0 },
+        { "type": "land" }
+      ]
+    }
+  ]
+}

@@ -18,7 +18,7 @@ class TrajectoryExecutor:
     камера смотрела вперёд.
     '''
 
-    CAMERA_HZ = 20
+    CAMERA_HZ = 25
 
     def __init__(self, drone: AirSimDroneConnector, recorder: Optional[SensorRecorder] = None):
         self.drone = drone
@@ -40,14 +40,14 @@ class TrajectoryExecutor:
 
     def _sleep_with_recording(self, duration):
         start = time.perf_counter()
-        # next_cam = start
-        # cam_dt = 1.0 / self.CAMERA_HZ
+        next_cam = start
+        cam_dt = 1.0 / self.CAMERA_HZ
 
         while time.perf_counter() - start < duration:
-            # now = time.perf_counter()
-            # if self.recorder is not None and now >= next_cam:
-            #     self.recorder.record_camera_images()
-            #     next_cam += cam_dt
+            now = time.perf_counter()
+            if self.recorder is not None and now >= next_cam:
+                self.recorder.record_camera_images()
+                next_cam += cam_dt
             time.sleep(0.005)
 
     def execute(self, commands):

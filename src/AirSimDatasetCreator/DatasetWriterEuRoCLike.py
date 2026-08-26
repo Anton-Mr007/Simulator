@@ -24,11 +24,11 @@ class EuRoCDatasetWriter:
         self.dataset_dir = self.root_dir / self.dataset_name
 
         self.cam0_dir = self.dataset_dir / "cam0" / "data"
-        self.cam1_dir = self.dataset_dir / "cam1" / "data"
+        # self.cam1_dir = self.dataset_dir / "cam1" / "data"
         self.cam2_dir = self.dataset_dir / "cam2" / "data"
 
         self.cam0_csv_path = self.cam0_dir.parent / "data.dat"
-        self.cam1_csv_path = self.cam1_dir.parent / "data.dat"
+        # self.cam1_csv_path = self.cam1_dir.parent / "data.dat"
         self.cam2_csv_path = self.cam2_dir.parent / "data.dat"
         self.imu_csv_path = self.dataset_dir / "imu.dat"
         self.gps_csv_path = self.dataset_dir / "gps.dat"
@@ -36,7 +36,7 @@ class EuRoCDatasetWriter:
         self.angle_csv_path = self.dataset_dir / "angle.dat"
 
     def create_structure(self):
-        for path in (self.cam0_dir, self.cam1_dir, self.cam2_dir, self.gt_csv_path.parent):
+        for path in (self.cam0_dir, self.cam2_dir, self.gt_csv_path.parent):
             path.mkdir(parents=True, exist_ok=True)
 
     def _open(self, path: Path):
@@ -59,10 +59,10 @@ class EuRoCDatasetWriter:
         self.gt_csv_path.write_text("# time_s\ttimestamp_ns\tpx\tpy\tpz\tqw\tqx\tqy\tqz\tvx\tvy\tvz\n")
         self.angle_csv_path.write_text("# time_s\ttimestamp_ns\troll\tpitch\tyaw\n")
         self.cam0_csv_path.write_text("# time_s\ttimestamp_ns\tfilename\n")
-        self.cam1_csv_path.write_text("# time_s\ttimestamp_ns\tfilename\n")
+        # self.cam1_csv_path.write_text("# time_s\ttimestamp_ns\tfilename\n")
         self.cam2_csv_path.write_text("# time_s\ttimestamp_ns\tfilename\n")
         for path in (self.imu_csv_path, self.gps_csv_path, self.gt_csv_path,
-                     self.angle_csv_path, self.cam0_csv_path, self.cam1_csv_path, self.cam2_csv_path):
+                     self.angle_csv_path, self.cam0_csv_path, self.cam2_csv_path):
             self._open(path)
 
     def close(self):

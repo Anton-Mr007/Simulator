@@ -1,3 +1,4 @@
+import math
 import threading
 import time
 
@@ -40,6 +41,7 @@ class SensorRecorder:
         self.t0 = None
         self._last_imu_ns = None
         self._gt_call_count = 0
+        self._home_geo = None
 
     @staticmethod
     def _to_drone_frame(v):
@@ -92,18 +94,18 @@ class SensorRecorder:
         responses = self.cam_client.simGetImages([
             airsim.ImageRequest(self.cam0_name, airsim.ImageType.Scene,
                                 pixels_as_float=False, compress=False),
-            airsim.ImageRequest(self.cam1_name, airsim.ImageType.Scene,
-                                pixels_as_float=False, compress=False),
+            # airsim.ImageRequest(self.cam1_name, airsim.ImageType.Scene,
+            #                     pixels_as_float=False, compress=False),
             airsim.ImageRequest(self.cam2_name, airsim.ImageType.Scene,
                                 pixels_as_float=False, compress=False),
         ])
 
-        if len(responses) != 3:
-            raise RuntimeError(f"Ожидались 3 изображения, получено: {len(responses)}")
+        if len(responses) != 2:
+            raise RuntimeError(f"Ожидались 2 изображения, получено: {len(responses)}")
 
         time_s = self._time_s()
 
-        for camera_name, response in zip(["cam0", "cam1", "cam2"], responses):
+        for camera_name, response in zip(["cam0", "cam2"], responses):
             if response.width == 0 or response.height == 0:
                 raise RuntimeError(
                     f"Камера {camera_name} вернула пустое изображение. "
@@ -115,15 +117,34 @@ class SensorRecorder:
             self.writer.write_camera_image(camera_name, timestamp_ns, image_rgb, time_s)
 
     def record_gps(self):
-        gps = self.gps_client.getGpsData()
-        if not gps.is_valid:
-            return
-        timestamp_ns = gps.time_stamp
-        geo = gps.gnss.geo_point
-        vx, vy, vz = self._to_drone_frame(gps.gnss.velocity)
+        if self._home_geo is None:
+            try:
+                self._home_geo = self.gps_client.getHomeGeoPoint()
+            except Exception:
+                return
+
+        kin = self.gt_client.simGetGroundTruthKinematics()
+        timestamp_ns = self._last_imu_ns
+        if timestamp_ns is None:
+            timestamp_ns = self.gt_client.getMultirotorState().timestamp
+
+        north = kin.position.x_val
+        east = kin.position.y_val
+        down = kin.position.z_val
+
+        R_EARTH = 6371000.0
+        lat = self._home_geo.latitude + math.degrees(north / R_EARTH)
+        lon = self._home_geo.longitude + math.degrees(east / (R_EARTH * math.cos(math.radians(self._home_geo.latitude))))
+        alt = self._home_geo.altitude - down
+
+        vx_ned = kin.linear_velocity.x_val
+        vy_ned = kin.linear_velocity.y_val
+        vz_ned = kin.linear_velocity.z_val
+        vx, vy, vz = self._to_drone_frame(kin.linear_velocity)
+
         self.writer.write_gps_row(
             timestamp_ns,
-            geo.latitude, geo.longitude, geo.altitude,
+            lat, lon, alt,
             vx, vy, vz,
             self._time_s(),
         )
@@ -168,4 +189,4 @@ class SensorRecorder:
     def record_once(self):
         self.record_imu()
         self.record_ground_truth()
-        # self.record_camera_images()
+        self.record_camera_images()
