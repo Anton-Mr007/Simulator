@@ -11,7 +11,7 @@ from src.AirSimDatasetCreator.TrajectoryExecuter import TrajectoryExecutor
 from src.AirSimDatasetCreator.IP import DESKTOP_IP, PORT
 
 
-with open('trajectories/square_1000m.json', 'r', encoding='utf-8') as f:
+with open('trajectories/video.json', 'r', encoding='utf-8') as f:
     dct = json.load(f)
 
 for _dct in dct['trajectories']:

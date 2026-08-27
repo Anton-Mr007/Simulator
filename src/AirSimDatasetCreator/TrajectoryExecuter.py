@@ -46,7 +46,10 @@ class TrajectoryExecutor:
         while time.perf_counter() - start < duration:
             now = time.perf_counter()
             if self.recorder is not None and now >= next_cam:
-                self.recorder.record_camera_images()
+                try:
+                    self.recorder.record_camera_images()
+                except Exception:
+                    pass
                 next_cam += cam_dt
             time.sleep(0.005)
 
@@ -90,7 +93,7 @@ class TrajectoryExecutor:
                     pass
                 try:
                     self.client.moveByVelocityAsync(
-                        command["vx"], command["vy"], command["vz"], command["duration"]
+                        command["vx"], command["vy"], command.get("vz", 0.0), command["duration"]
                     )
                 except Exception:
                     pass

@@ -21,14 +21,14 @@
         "UpdateFrequency": 200,
 
         "GyroBiasStabilityTau": 1000,
-        "GyroBiasStability": 0.0001,
-        "GyroNoiseDensity": 0.0003394,
-        "GyroRandomWalk": 3.8785e-05,
+        "GyroBiasStability": 0.0,
+        "GyroNoiseDensity": 0.0,
+        "GyroRandomWalk": 0.0,
 
-        "AccelNoiseDensity": 0.004,
-        "AccelRandomWalk": 0.0002,
+        "AccelNoiseDensity": 0.0,
+        "AccelRandomWalk": 0.0,
         "AccelBiasStabilityTau": 1000,
-        "AccelBiasStability": 0.0001
+        "AccelBiasStability": 0.0
       },
 
       "Gps": {
@@ -41,7 +41,7 @@
       "Cameras": {
         "cam0": {
           "X": 0.35,
-          "Y": 0.0,
+          "Y": -0.1,
           "Z": -0.05,
           "Pitch": 0.0,
           "Roll": 0.0,

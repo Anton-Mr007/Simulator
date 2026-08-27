@@ -73,12 +73,12 @@ class EuRoCDatasetWriter:
     def write_camera_image(self, camera_name: str, timestamp_ns: int, image_rgb: np.ndarray, time_s: float):
         if camera_name == "cam0":
             image_dir, csv_path = self.cam0_dir, self.cam0_csv_path
-        elif camera_name == "cam1":
-            image_dir, csv_path = self.cam1_dir, self.cam1_csv_path
+        # elif camera_name == "cam1":
+        #     image_dir, csv_path = self.cam1_dir, self.cam1_csv_path
         elif camera_name == "cam2":
             image_dir, csv_path = self.cam2_dir, self.cam2_csv_path
         else:
-            raise ValueError(f"Неизвестная камера: {camera_name}. Используй 'cam0', 'cam1' или 'cam2'.")
+            raise ValueError(f"Неизвестная камера: {camera_name}. Используй 'cam0' или 'cam2'.")
 
         filename = f"{timestamp_ns}.png"
         image_path = image_dir / filename

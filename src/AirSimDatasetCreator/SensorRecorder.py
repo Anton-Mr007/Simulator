@@ -5,7 +5,6 @@ import time
 import numpy as np
 import airsim
 
-
 class SensorRecorder:
     '''
     Считывает данные из AirSim и передает их writer.
@@ -42,6 +41,7 @@ class SensorRecorder:
         self._last_imu_ns = None
         self._gt_call_count = 0
         self._home_geo = None
+        self._gt_ned_pos = None
 
     @staticmethod
     def _to_drone_frame(v):
@@ -76,6 +76,11 @@ class SensorRecorder:
         timestamp_ns = self._last_imu_ns
         if timestamp_ns is None:
             timestamp_ns = self.gt_client.getMultirotorState().timestamp
+
+        self._gt_ned_pos = (kin.position.x_val, kin.position.y_val, kin.position.z_val)
+        self._gt_ned_velocity = (kin.linear_velocity.x_val,
+                                 kin.linear_velocity.y_val,
+                                 kin.linear_velocity.z_val)
 
         px, py, pz = self._to_drone_frame(kin.position)
         vx, vy, vz = self._to_drone_frame(kin.linear_velocity)
@@ -118,29 +123,24 @@ class SensorRecorder:
 
     def record_gps(self):
         if self._home_geo is None:
-            try:
-                self._home_geo = self.gps_client.getHomeGeoPoint()
-            except Exception:
-                return
+            return
+        if self._gt_ned_pos is None:
+            return
 
-        kin = self.gt_client.simGetGroundTruthKinematics()
         timestamp_ns = self._last_imu_ns
         if timestamp_ns is None:
             timestamp_ns = self.gt_client.getMultirotorState().timestamp
 
-        north = kin.position.x_val
-        east = kin.position.y_val
-        down = kin.position.z_val
+        north, east, down = self._gt_ned_pos
 
         R_EARTH = 6371000.0
         lat = self._home_geo.latitude + math.degrees(north / R_EARTH)
-        lon = self._home_geo.longitude + math.degrees(east / (R_EARTH * math.cos(math.radians(self._home_geo.latitude))))
+        lon = self._home_geo.longitude + math.degrees(
+            east / (R_EARTH * math.cos(math.radians(self._home_geo.latitude))))
         alt = self._home_geo.altitude - down
 
-        vx_ned = kin.linear_velocity.x_val
-        vy_ned = kin.linear_velocity.y_val
-        vz_ned = kin.linear_velocity.z_val
-        vx, vy, vz = self._to_drone_frame(kin.linear_velocity)
+        vn, ve, vd = self._gt_ned_velocity
+        vx, vy, vz = vn, -vd, ve
 
         self.writer.write_gps_row(
             timestamp_ns,
@@ -156,6 +156,11 @@ class SensorRecorder:
         ctypes.windll.winmm.timeBeginPeriod(1)
         self.t0 = time.time()
         self._stop_event.clear()
+        if self._home_geo is None:
+            try:
+                self._home_geo = self.gt_client.getHomeGeoPoint()
+            except Exception:
+                self._home_geo = None
 
         def loop(fn, rate):
             dt = 1 / rate
@@ -189,4 +194,4 @@ class SensorRecorder:
     def record_once(self):
         self.record_imu()
         self.record_ground_truth()
-        self.record_camera_images()
+        # self.record_camera_images()
